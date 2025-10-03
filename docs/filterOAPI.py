@@ -94,7 +94,6 @@ if __name__ == "__main__":
     # Filter component schemas based on names
     filter_schemas_by_names(spec, whitelist_schemas)
     # Filter security schemes based on names
-    filter_security_schemes_by_names(spec, whitelist_security_schemes)
 
     # Save the filtered spec to the output file
     with open(output_file, 'w') as f:

@@ -838,6 +838,10 @@ components:
       type: apiKey
       name: X-Local-Token
       in: header
+    admin_auth:
+      type: apiKey
+      name: BAR_ADMIN_SESS
+      in: cookie
     not_onboarded:
       type: apiKey
       name: BAR_ONBOARD_SESS
