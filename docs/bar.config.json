@@ -1,0 +1,7 @@
+{
+    "library": "reqwest-trait",
+    "mockall": true,
+    "packageName": "openbar-api",
+    "topLevelApiClient": true,
+    "preferUnsignedInt": true
+}

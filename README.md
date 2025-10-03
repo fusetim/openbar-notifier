@@ -46,7 +46,26 @@ Feel free to open an issue if you find a bug or have a feature request.
 Otherwise the previous section already explains how to build and run the project.
 
 That said, we also relies on some code-generation for the OpenBar API client.  
-***TODO: More details about that.***
+
+### OpenAPI auto-generation
+
+We use the "official" OpenBar OpenAPI specification that you can find in the [OpenBar GitHub repository](todo).
+However, since we use only a very small subset of this API, we use a small script to filter the OpenAPI specification
+to keep only the parts we need. This script is located in the `docs` folder and is called `filterOAPI.py`.
+
+Just run the following command to get the filtered OpenAPI specification: (you might need to edit filterOAPI.py to adjust the whitelists)
+```bash
+python3 docs/filterOAPI.py docs/bar.openapi.yaml docs/bar.mini.openapi.yaml
+```
+
+Then, you can use the OpenAPI Tools generator to generate the Rust client code.  
+For instance:
+
+```bash
+npx @openapitools/openapi-generator-cli generate -i docs/bar.mini.openapi.yml -c docs/bar.config.json --global-property apiDocs=false,modelDocs=false -g rust -o openbar-api
+```
+
+If the crate `openbar-api` build successfully, then you can commit and push the new version.
 
 ## License
 

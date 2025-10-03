@@ -1,0 +1,844 @@
+openapi: 3.0.3
+info:
+  title: OpenAPI - Bar
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+  version: 1.0.11
+servers:
+- url: http://localhost:8080
+- url: https://le-bar.telecomnancy.net/api/v1
+- url: https://bar.yewolf.fr/api
+tags:
+- name: auth
+  description: Related to user's authentication
+- name: accounts
+  description: Related to user's accounts
+- name: transactions
+  description: Related to user's transactions
+- name: refills
+  description: Related to user's refills (real money)
+- name: stars
+  description: Related to donnation (virtual money)
+- name: categories
+  description: Categories of items in the shop
+- name: items
+  description: Items on sales in the shop
+- name: carousel
+  description: Carousel texts and images
+- name: deleted
+  description: Restore or delete permanently
+paths:
+  /auth/card:
+    post:
+      summary: ''
+      description: Connect account to card
+      operationId: connectCard
+      requestBody:
+        description: Card id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_id:
+                  type: string
+                card_pin:
+                  type: string
+              required:
+              - card_id
+              - card_pin
+      responses:
+        '200':
+          description: Successfully connected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - local_token: []
+      tags:
+      - auth
+  /auth/password:
+    post:
+      summary: ''
+      description: Connect account with password
+      operationId: connectPassword
+      requestBody:
+        description: Password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_id:
+                  type: string
+                password:
+                  type: string
+              required:
+              - card_id
+              - password
+      responses:
+        '200':
+          description: Successfully connected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - local_token: []
+      tags:
+      - auth
+  /logout:
+    get:
+      summary: ''
+      description: Logout
+      operationId: logout
+      responses:
+        '204':
+          description: Successfully logged out
+        '401':
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      - not_onboarded: []
+      tags:
+      - auth
+  /account:
+    get:
+      summary: ''
+      description: Get the basic current account's information
+      operationId: getAccount
+      responses:
+        '200':
+          description: Successfully got account's info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '401':
+          description: Not connected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - accounts
+  /categories:
+    get:
+      description: Get all categories
+      operationId: getCategories
+      parameters:
+      - name: hidden
+        in: query
+        description: Show hidden categories (admin only)
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - categories
+  /categories/{category_id}:
+    get:
+      description: Get a category
+      operationId: getCategory
+      parameters:
+      - name: category_id
+        in: path
+        description: ID of the category
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - categories
+  /categories/{category_id}/picture:
+    get:
+      description: Get a category picture
+      operationId: getCategoryPicture
+      parameters:
+      - name: category_id
+        in: path
+        description: ID of the category
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ''
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - categories
+  /categories/{category_id}/items:
+    get:
+      description: Get all items of a category
+      operationId: getCategoryItems
+      parameters:
+      - name: category_id
+        in: path
+        description: ID of the category
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+          format: uint64
+      - name: limit
+        in: query
+        description: Number of items per page
+        required: false
+        schema:
+          type: integer
+          format: uint64
+      - name: state
+        in: query
+        description: Filter by state
+        required: false
+        schema:
+          type: string
+          $ref: '#/components/schemas/ItemState'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item'
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                - items
+                - page
+                - limit
+                - max_page
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - items
+  /categories/{category_id}/items/{item_id}/picture:
+    get:
+      description: Get an item picture
+      operationId: getItemPicture
+      parameters:
+      - name: category_id
+        in: path
+        description: ID of the category
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      - name: item_id
+        in: path
+        description: ID of the item
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ''
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - auth: []
+      tags:
+      - items
+components:
+  schemas:
+    UUID:
+      type: string
+      format: uuid
+      example: 4be0643f-1d98-573b-97cd-ca98a65347dd
+    ErrorCodes:
+      type: string
+      enum:
+      - bad_request
+      - forbidden
+      - account_not_found
+      - qr_invalid
+      - internal_server_error
+      - not_authenticated
+      - image_not_found
+      - text_not_found
+      - category_not_found
+      - item_not_found
+      - refill_not_found
+      - starring_not_found
+      - transaction_not_found
+      x-enum-varnames:
+      - ErrBadRequest
+      - ErrForbidden
+      - ErrAccountNotFound
+      - ErrQRInvalid
+      - ErrInternalServerError
+      - ErrNotAuthenticated
+      - ErrImageNotFound
+      - ErrTextNotFound
+      - ErrCategoryNotFound
+      - ErrItemNotFound
+      - ErrRefillNotFound
+      - ErrStarringNotFound
+      - ErrTransactionNotFound
+    Messages:
+      type: string
+      enum:
+      - Bad request
+      - Not connected
+      - Missing fields %v
+      - Account already exists
+      - Account not found
+      - Account is not allowed to use ressource
+      - Account cannot use ressource at the time being
+      - Invalid QR Code nonce
+      - Internal server error
+      - You are not authenticated
+      - Image does not exists
+      - Text does not exists
+      - Category does not exists
+      - Item does not exists
+      - Refill does not exists
+      - Starring does not exists
+      - Transaction does not exists
+      x-enum-varnames:
+      - MsgBadRequest
+      - MsgNotConnected
+      - MsgMissingFields
+      - MsgAccountAlreadyExists
+      - MsgAccountNotFound
+      - MsgAccountNotAllowed
+      - MsgAccountNotAvailable
+      - MsgQRInvalid
+      - MsgInternalServerError
+      - MsgNotAuthenticated
+      - MsgImageNotFound
+      - MsgTextNotFound
+      - MsgCategoryNotFound
+      - MsgItemNotFound
+      - MsgRefillNotFound
+      - MsgStarringNotFound
+      - MsgTransactionNotFound
+    HTTPError:
+      type: object
+      properties:
+        message:
+          $ref: '#/components/schemas/Messages'
+        error_code:
+          $ref: '#/components/schemas/ErrorCodes'
+      required:
+      - message
+      - error_code
+    AccountState:
+      type: string
+      description: State of the account
+      example: account_ok
+      enum:
+      - not_onboarded
+      - account_ok
+      x-enum-varnames:
+      - AccountNotOnBoarded
+      - AccountOK
+    AccountRestrictions:
+      type: string
+      description: Restrictions of the account
+      example: remote_restricted
+      enum:
+      - remote_restricted
+      - blocked
+      x-enum-varnames:
+      - AccountRemoteRestricted
+      - AccountBlocked
+    AccountRole:
+      type: string
+      description: Role of the account
+      example: student
+      enum:
+      - student
+      - student_with_benefits
+      - member
+      - admin
+      - ghost
+      - superadmin
+      x-enum-varnames:
+      - AccountStudent
+      - AccountStudentWithBenefits
+      - AccountMember
+      - AccountAdmin
+      - AccountGhost
+      - AccountSuperAdmin
+    AccountPriceRole:
+      type: string
+      description: Role of the account
+      example: student
+      enum:
+      - coutant
+      - staff_bar
+      - privilegies
+      - menu
+      - ceten
+      - externe
+      x-enum-varnames:
+      - AccountPriceCoutant
+      - AccountPriceStaffBar
+      - AccountPricePrivilegies
+      - AccountPriceMenu
+      - AccountPriceCeten
+      - AccountPriceExterne
+    Account:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        first_name:
+          type: string
+        last_name:
+          type: string
+        nickname:
+          type: string
+        google_id:
+          type: string
+        google_picture:
+          type: string
+        email_address:
+          type: string
+        balance:
+          type: integer
+          format: int64
+          example: 1000
+        points:
+          type: integer
+          format: int64
+          example: 1000
+        card_id:
+          type: string
+        card_pin:
+          type: string
+          x-oapi-codegen-extra-tags:
+            json: '-'
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            json: '-'
+        role:
+          $ref: '#/components/schemas/AccountRole'
+        price_role:
+          $ref: '#/components/schemas/AccountPriceRole'
+        restrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountRestrictions'
+        state:
+          $ref: '#/components/schemas/AccountState'
+        deleted_at:
+          type: integer
+          format: uint64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
+        wants_to_staff:
+          type: boolean
+      required:
+      - id
+      - first_name
+      - last_name
+      - email_address
+      - balance
+      - role
+      - price_role
+      - restrictions
+      - state
+      - card_pin
+      - points
+      - wants_to_staff
+    ItemState:
+      type: string
+      description: State of the item
+      example: buyable
+      enum:
+      - buyable
+      - not_buyable
+      x-enum-varnames:
+      - ItemBuyable
+      - ItemNotBuyable
+    ItemPrices:
+      type: object
+      properties:
+        coutant:
+          type: integer
+          format: uint64
+          example: 1000
+        staff_bar:
+          type: integer
+          format: uint64
+          example: 1000
+        privilegies:
+          type: integer
+          format: uint64
+          example: 1000
+        menu:
+          type: integer
+          format: uint64
+          example: 1000
+        ceten:
+          type: integer
+          format: uint64
+          example: 1000
+        externe:
+          type: integer
+          format: uint64
+          example: 1000
+      required:
+      - coutant
+      - staff_bar
+      - privilegies
+      - menu
+      - ceten
+      - externe
+    Item:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        prices:
+          $ref: '#/components/schemas/ItemPrices'
+        display_prices:
+          $ref: '#/components/schemas/ItemPrices'
+        display_price:
+          type: integer
+          format: uint64
+          example: 1000
+        promotion:
+          type: integer
+          format: uint64
+          example: 3000 (-30%)
+        promotion_ends_at:
+          type: integer
+          format: uint64
+        amount_left:
+          type: integer
+          format: uint64
+          example: 32
+        optimal_amount:
+          type: integer
+          format: uint64
+          example: 32
+        buy_limit:
+          type: integer
+          format: uint64
+          example: 32
+        category_id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          description: Name of the current item
+        picture_uri:
+          type: string
+          description: Link to picture of the current item
+        available_from:
+          type: integer
+          format: uint64
+        available_until:
+          type: integer
+          format: uint64
+        is_menu:
+          type: boolean
+        menu_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+        menu_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategory'
+        state:
+          $ref: '#/components/schemas/ItemState'
+        last_tva:
+          type: integer
+          format: uint64
+        deleted_at:
+          type: integer
+          format: uint64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        ref_bundle:
+          type: string
+          description: Referal code of the product in the Drive
+        fournisseur:
+          $ref: '#/components/schemas/Fournisseur'
+      required:
+      - id
+      - prices
+      - amount_left
+      - optimal_amount
+      - category_id
+      - name
+      - picture_uri
+      - state
+      - is_menu
+    MenuItem:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          description: Name of the current item
+        picture_uri:
+          type: string
+          description: Link to picture of the current item
+        promotion:
+          type: integer
+          format: uint64
+          example: 3000 (-30%)
+        amount:
+          type: integer
+          format: uint64
+          example: 32
+      required:
+      - id
+      - amount
+      - name
+      - picture_uri
+    MenuCategory:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          description: Name of the category
+        picture_uri:
+          type: string
+          description: Link to picture of the category
+        amount:
+          type: integer
+          format: uint64
+          example: 32
+      required:
+      - id
+      - amount
+      - name
+      - picture_uri
+    Category:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          description: Name of the current category
+        picture_uri:
+          type: string
+          description: Link to picture of the current category
+        position:
+          type: integer
+          format: uint64
+        hidden:
+          type: boolean
+        special_price:
+          type: boolean
+        deleted_at:
+          type: integer
+          format: uint64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
+      required:
+      - id
+      - name
+      - picture_uri
+      - position
+      - items
+      - hidden
+      - special_price
+    Fournisseur:
+      type: string
+      enum:
+      - auchan
+      - auchan_drive
+      - viennoiserie
+      - promocash
+      - holy
+      x-enum-varnames:
+      - Auchan
+      - Auchan_Drive
+      - Viennoiserie
+      - Promocash
+      - Holy
+  securitySchemes:
+    auth:
+      type: apiKey
+      name: BAR_SESS
+      in: cookie
+    local_token:
+      type: apiKey
+      name: X-Local-Token
+      in: header
+    not_onboarded:
+      type: apiKey
+      name: BAR_ONBOARD_SESS
+      in: cookie

@@ -1,7 +1,3 @@
-[package]
-name = "openbar-notifier"
-version = "0.1.0"
-edition = "2024"
-authors = ["FuseTim"]
-
-[dependencies]
+[workspace]
+resolver = "3"
+members = ["openbar-notifier", "openbar-api"]
