@@ -20,17 +20,17 @@ pub struct Item {
     #[serde(rename = "display_prices", skip_serializing_if = "Option::is_none")]
     pub display_prices: Option<Box<models::ItemPrices>>,
     #[serde(rename = "display_price", skip_serializing_if = "Option::is_none")]
-    pub display_price: Option<i32>,
+    pub display_price: Option<i64>,
     #[serde(rename = "promotion", skip_serializing_if = "Option::is_none")]
-    pub promotion: Option<i32>,
+    pub promotion: Option<i64>,
     #[serde(rename = "promotion_ends_at", skip_serializing_if = "Option::is_none")]
-    pub promotion_ends_at: Option<i32>,
+    pub promotion_ends_at: Option<i64>,
     #[serde(rename = "amount_left")]
-    pub amount_left: i32,
+    pub amount_left: i64,
     #[serde(rename = "optimal_amount")]
-    pub optimal_amount: i32,
+    pub optimal_amount: i64,
     #[serde(rename = "buy_limit", skip_serializing_if = "Option::is_none")]
-    pub buy_limit: Option<i32>,
+    pub buy_limit: Option<i64>,
     #[serde(rename = "category_id")]
     pub category_id: uuid::Uuid,
     /// Name of the current item
@@ -40,9 +40,9 @@ pub struct Item {
     #[serde(rename = "picture_uri")]
     pub picture_uri: String,
     #[serde(rename = "available_from", skip_serializing_if = "Option::is_none")]
-    pub available_from: Option<i32>,
+    pub available_from: Option<i64>,
     #[serde(rename = "available_until", skip_serializing_if = "Option::is_none")]
-    pub available_until: Option<i32>,
+    pub available_until: Option<i64>,
     #[serde(rename = "is_menu")]
     pub is_menu: bool,
     #[serde(rename = "menu_items", skip_serializing_if = "Option::is_none")]
@@ -52,13 +52,13 @@ pub struct Item {
     #[serde(rename = "state")]
     pub state: models::ItemState,
     #[serde(rename = "last_tva", skip_serializing_if = "Option::is_none")]
-    pub last_tva: Option<i32>,
+    pub last_tva: Option<i64>,
     #[serde(rename = "deleted_at", skip_serializing_if = "Option::is_none")]
-    pub deleted_at: Option<i32>,
+    pub deleted_at: Option<i64>,
     #[serde(rename = "deleted_by", skip_serializing_if = "Option::is_none")]
     pub deleted_by: Option<uuid::Uuid>,
     #[serde(rename = "amount_per_bundle", skip_serializing_if = "Option::is_none")]
-    pub amount_per_bundle: Option<i32>,
+    pub amount_per_bundle: Option<i64>,
     /// Referal code of the product in the Drive
     #[serde(rename = "ref_bundle", skip_serializing_if = "Option::is_none")]
     pub ref_bundle: Option<String>,
@@ -67,7 +67,7 @@ pub struct Item {
 }
 
 impl Item {
-    pub fn new(id: uuid::Uuid, prices: models::ItemPrices, amount_left: i32, optimal_amount: i32, category_id: uuid::Uuid, name: String, picture_uri: String, is_menu: bool, state: models::ItemState) -> Item {
+    pub fn new(id: uuid::Uuid, prices: models::ItemPrices, amount_left: i64, optimal_amount: i64, category_id: uuid::Uuid, name: String, picture_uri: String, is_menu: bool, state: models::ItemState) -> Item {
         Item {
             id,
             prices: Box::new(prices),

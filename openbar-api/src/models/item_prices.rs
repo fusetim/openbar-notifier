@@ -14,21 +14,21 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ItemPrices {
     #[serde(rename = "coutant")]
-    pub coutant: i32,
+    pub coutant: i64,
     #[serde(rename = "staff_bar")]
-    pub staff_bar: i32,
+    pub staff_bar: i64,
     #[serde(rename = "privilegies")]
-    pub privilegies: i32,
+    pub privilegies: i64,
     #[serde(rename = "menu")]
-    pub menu: i32,
+    pub menu: i64,
     #[serde(rename = "ceten")]
-    pub ceten: i32,
+    pub ceten: i64,
     #[serde(rename = "externe")]
-    pub externe: i32,
+    pub externe: i64,
 }
 
 impl ItemPrices {
-    pub fn new(coutant: i32, staff_bar: i32, privilegies: i32, menu: i32, ceten: i32, externe: i32) -> ItemPrices {
+    pub fn new(coutant: i64, staff_bar: i64, privilegies: i64, menu: i64, ceten: i64, externe: i64) -> ItemPrices {
         ItemPrices {
             coutant,
             staff_bar,

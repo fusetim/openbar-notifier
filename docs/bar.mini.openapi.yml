@@ -309,14 +309,14 @@ paths:
         required: false
         schema:
           type: integer
-          format: uint64
+          format: int64
       - name: limit
         in: query
         description: Number of items per page
         required: false
         schema:
           type: integer
-          format: uint64
+          format: int64
       - name: state
         in: query
         description: Filter by state
@@ -338,13 +338,13 @@ paths:
                       $ref: '#/components/schemas/Item'
                   page:
                     type: integer
-                    format: uint64
+                    format: int64
                   limit:
                     type: integer
-                    format: uint64
+                    format: int64
                   max_page:
                     type: integer
-                    format: uint64
+                    format: int64
                 required:
                 - items
                 - page
@@ -574,19 +574,12 @@ components:
           example: 1000
         card_id:
           type: string
-        card_pin:
-          type: string
-          x-oapi-codegen-extra-tags:
-            json: '-'
-        password:
-          type: string
-          x-oapi-codegen-extra-tags:
-            json: '-'
         role:
           $ref: '#/components/schemas/AccountRole'
         price_role:
           $ref: '#/components/schemas/AccountPriceRole'
         restrictions:
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/AccountRestrictions'
@@ -594,7 +587,7 @@ components:
           $ref: '#/components/schemas/AccountState'
         deleted_at:
           type: integer
-          format: uint64
+          format: int64
         deleted_by:
           $ref: '#/components/schemas/UUID'
         wants_to_staff:
@@ -607,9 +600,7 @@ components:
       - balance
       - role
       - price_role
-      - restrictions
       - state
-      - card_pin
       - points
       - wants_to_staff
     ItemState:
@@ -627,27 +618,27 @@ components:
       properties:
         coutant:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         staff_bar:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         privilegies:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         menu:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         ceten:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         externe:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
       required:
       - coutant
@@ -667,26 +658,26 @@ components:
           $ref: '#/components/schemas/ItemPrices'
         display_price:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         promotion:
           type: integer
-          format: uint64
+          format: int64
           example: 3000 (-30%)
         promotion_ends_at:
           type: integer
-          format: uint64
+          format: int64
         amount_left:
           type: integer
-          format: uint64
+          format: int64
           example: 32
         optimal_amount:
           type: integer
-          format: uint64
+          format: int64
           example: 32
         buy_limit:
           type: integer
-          format: uint64
+          format: int64
           example: 32
         category_id:
           $ref: '#/components/schemas/UUID'
@@ -698,10 +689,10 @@ components:
           description: Link to picture of the current item
         available_from:
           type: integer
-          format: uint64
+          format: int64
         available_until:
           type: integer
-          format: uint64
+          format: int64
         is_menu:
           type: boolean
         menu_items:
@@ -716,15 +707,15 @@ components:
           $ref: '#/components/schemas/ItemState'
         last_tva:
           type: integer
-          format: uint64
+          format: int64
         deleted_at:
           type: integer
-          format: uint64
+          format: int64
         deleted_by:
           $ref: '#/components/schemas/UUID'
         amount_per_bundle:
           type: integer
-          format: uint64
+          format: int64
         ref_bundle:
           type: string
           description: Referal code of the product in the Drive
@@ -753,11 +744,11 @@ components:
           description: Link to picture of the current item
         promotion:
           type: integer
-          format: uint64
+          format: int64
           example: 3000 (-30%)
         amount:
           type: integer
-          format: uint64
+          format: int64
           example: 32
       required:
       - id
@@ -777,7 +768,7 @@ components:
           description: Link to picture of the category
         amount:
           type: integer
-          format: uint64
+          format: int64
           example: 32
       required:
       - id
@@ -797,14 +788,14 @@ components:
           description: Link to picture of the current category
         position:
           type: integer
-          format: uint64
+          format: int64
         hidden:
           type: boolean
         special_price:
           type: boolean
         deleted_at:
           type: integer
-          format: uint64
+          format: int64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:

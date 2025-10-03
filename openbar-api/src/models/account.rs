@@ -33,20 +33,16 @@ pub struct Account {
     pub points: i64,
     #[serde(rename = "card_id", skip_serializing_if = "Option::is_none")]
     pub card_id: Option<String>,
-    #[serde(rename = "card_pin")]
-    pub card_pin: String,
-    #[serde(rename = "password", skip_serializing_if = "Option::is_none")]
-    pub password: Option<String>,
     #[serde(rename = "role")]
     pub role: models::AccountRole,
     #[serde(rename = "price_role")]
     pub price_role: models::AccountPriceRole,
-    #[serde(rename = "restrictions")]
-    pub restrictions: Vec<models::AccountRestrictions>,
+    #[serde(rename = "restrictions", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub restrictions: Option<Option<Vec<models::AccountRestrictions>>>,
     #[serde(rename = "state")]
     pub state: models::AccountState,
     #[serde(rename = "deleted_at", skip_serializing_if = "Option::is_none")]
-    pub deleted_at: Option<i32>,
+    pub deleted_at: Option<i64>,
     #[serde(rename = "deleted_by", skip_serializing_if = "Option::is_none")]
     pub deleted_by: Option<uuid::Uuid>,
     #[serde(rename = "wants_to_staff")]
@@ -54,7 +50,7 @@ pub struct Account {
 }
 
 impl Account {
-    pub fn new(id: uuid::Uuid, first_name: String, last_name: String, email_address: String, balance: i64, points: i64, card_pin: String, role: models::AccountRole, price_role: models::AccountPriceRole, restrictions: Vec<models::AccountRestrictions>, state: models::AccountState, wants_to_staff: bool) -> Account {
+    pub fn new(id: uuid::Uuid, first_name: String, last_name: String, email_address: String, balance: i64, points: i64, role: models::AccountRole, price_role: models::AccountPriceRole, state: models::AccountState, wants_to_staff: bool) -> Account {
         Account {
             id,
             first_name,
@@ -66,11 +62,9 @@ impl Account {
             balance,
             points,
             card_id: None,
-            card_pin,
-            password: None,
             role,
             price_role,
-            restrictions,
+            restrictions: None,
             state,
             deleted_at: None,
             deleted_by: None,

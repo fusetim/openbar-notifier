@@ -16,15 +16,15 @@ pub struct GetCategoryItems200Response {
     #[serde(rename = "items")]
     pub items: Vec<models::Item>,
     #[serde(rename = "page")]
-    pub page: i32,
+    pub page: i64,
     #[serde(rename = "limit")]
-    pub limit: i32,
+    pub limit: i64,
     #[serde(rename = "max_page")]
-    pub max_page: i32,
+    pub max_page: i64,
 }
 
 impl GetCategoryItems200Response {
-    pub fn new(items: Vec<models::Item>, page: i32, limit: i32, max_page: i32) -> GetCategoryItems200Response {
+    pub fn new(items: Vec<models::Item>, page: i64, limit: i64, max_page: i64) -> GetCategoryItems200Response {
         GetCategoryItems200Response {
             items,
             page,

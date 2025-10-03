@@ -26,7 +26,7 @@ pub trait ItemsApi: Send + Sync {
     /// GET /categories/{category_id}/items
     ///
     /// Get all items of a category
-    async fn get_category_items<'category_id, 'page, 'limit, 'state>(&self, category_id: &str, page: Option<i32>, limit: Option<i32>, state: Option<&'state str>) -> Result<models::GetCategoryItems200Response, Error<GetCategoryItemsError>>;
+    async fn get_category_items<'category_id, 'page, 'limit, 'state>(&self, category_id: &str, page: Option<i64>, limit: Option<i64>, state: Option<&'state str>) -> Result<models::GetCategoryItems200Response, Error<GetCategoryItemsError>>;
 
     /// GET /categories/{category_id}/items/{item_id}/picture
     ///
@@ -49,7 +49,7 @@ impl ItemsApiClient {
 #[async_trait]
 impl ItemsApi for ItemsApiClient {
     /// Get all items of a category
-    async fn get_category_items<'category_id, 'page, 'limit, 'state>(&self, category_id: &str, page: Option<i32>, limit: Option<i32>, state: Option<&'state str>) -> Result<models::GetCategoryItems200Response, Error<GetCategoryItemsError>> {
+    async fn get_category_items<'category_id, 'page, 'limit, 'state>(&self, category_id: &str, page: Option<i64>, limit: Option<i64>, state: Option<&'state str>) -> Result<models::GetCategoryItems200Response, Error<GetCategoryItemsError>> {
         let local_var_configuration = &self.configuration;
 
         let local_var_client = &local_var_configuration.client;

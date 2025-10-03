@@ -22,19 +22,19 @@ pub struct Category {
     #[serde(rename = "picture_uri")]
     pub picture_uri: String,
     #[serde(rename = "position")]
-    pub position: i32,
+    pub position: i64,
     #[serde(rename = "hidden")]
     pub hidden: bool,
     #[serde(rename = "special_price")]
     pub special_price: bool,
     #[serde(rename = "deleted_at", skip_serializing_if = "Option::is_none")]
-    pub deleted_at: Option<i32>,
+    pub deleted_at: Option<i64>,
     #[serde(rename = "deleted_by", skip_serializing_if = "Option::is_none")]
     pub deleted_by: Option<uuid::Uuid>,
 }
 
 impl Category {
-    pub fn new(id: uuid::Uuid, name: String, picture_uri: String, position: i32, hidden: bool, special_price: bool) -> Category {
+    pub fn new(id: uuid::Uuid, name: String, picture_uri: String, position: i64, hidden: bool, special_price: bool) -> Category {
         Category {
             id,
             name,

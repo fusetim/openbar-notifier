@@ -22,11 +22,11 @@ pub struct MenuCategory {
     #[serde(rename = "picture_uri")]
     pub picture_uri: String,
     #[serde(rename = "amount")]
-    pub amount: i32,
+    pub amount: i64,
 }
 
 impl MenuCategory {
-    pub fn new(id: uuid::Uuid, name: String, picture_uri: String, amount: i32) -> MenuCategory {
+    pub fn new(id: uuid::Uuid, name: String, picture_uri: String, amount: i64) -> MenuCategory {
         MenuCategory {
             id,
             name,
