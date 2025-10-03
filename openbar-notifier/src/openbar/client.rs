@@ -2,6 +2,8 @@ use std::sync::Arc;
 
 use openbar_api::apis::configuration::Configuration as BarConfiguration;
 use openbar_api::apis::auth_api::{AuthApiClient};
+use openbar_api::apis::categories_api::{CategoriesApiClient};
+use openbar_api::apis::items_api::{ItemsApiClient};
 
 /// `OpenBarClient` provides a convenient wrapper for interacting with the OpenBar API.
 /// It manages API configuration, authentication tokens, and exposes API clients.
@@ -44,11 +46,25 @@ impl OpenBarClient {
     /// This token will be included in the `X-Local-Token` header for some API requests.
     pub fn set_local_token(&mut self, token: &str) {
         let cfg = Arc::make_mut(&mut self.bar_config);
-        cfg.bearer_access_token = Some(token.to_string());
+        let api_key = openbar_api::apis::configuration::ApiKey {
+            prefix: None,
+            key: token.to_string(),
+        };
+        cfg.api_key = Some(api_key);
     }
 
     /// Get an instance of the AuthApiClient using the current configuration.
     pub fn as_auth(&self) -> AuthApiClient {
         AuthApiClient::new(self.bar_config.clone())
+    }
+
+    /// Get an instance of the CategoriesApiClient using the current configuration.
+    pub fn as_categories(&self) -> CategoriesApiClient {
+        CategoriesApiClient::new(self.bar_config.clone())
+    }
+
+    /// Get an instance of the ItemsApiClient using the current configuration.
+    pub fn as_items(&self) -> ItemsApiClient {
+        ItemsApiClient::new(self.bar_config.clone())
     }
 }
