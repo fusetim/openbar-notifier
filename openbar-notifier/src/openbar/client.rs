@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use openbar_api::apis::configuration::Configuration as BarConfiguration;
+use openbar_api::apis::Error as ApiError;
 use openbar_api::apis::auth_api::{AuthApi, AuthApiClient, ConnectCardError, LogoutError};
 use openbar_api::apis::categories_api::{CategoriesApi, CategoriesApiClient, GetCategoriesError};
+use openbar_api::apis::configuration::Configuration as BarConfiguration;
 use openbar_api::apis::items_api::{GetCategoryItemsError, ItemsApi, ItemsApiClient};
 use openbar_api::models::{Account, Category, ConnectCardRequest, Item};
-use openbar_api::apis::Error as ApiError;
 
 /// `OpenBarClient` provides a convenient wrapper for interacting with the OpenBar API.
 /// It manages API configuration, authentication tokens, and exposes API clients.
@@ -45,7 +45,7 @@ impl OpenBarClient {
     }
 
     /// Creates a new OpenBarClient with a custom BarConfiguration.
-    /// 
+    ///
     /// This method is mostly useful for testing or advanced use cases where you need to
     /// customize the entire configuration.
     pub fn with_configuration(configuration: BarConfiguration) -> Self {
@@ -83,9 +83,13 @@ impl OpenBarClient {
 
     /// Log in using a card ID and PIN, returning the associated Account if successful.
     /// This is a convenience method that wraps the `connect_card` method of the AuthApiClient.
-    /// 
+    ///
     /// Note: this method will modify the internal state of the client by setting the necessary auth token/cookies.
-    pub async fn login_by_card(&self, card_id: &str, pin: &str) -> Result<Option<Account>, ApiError<ConnectCardError>> {
+    pub async fn login_by_card(
+        &self,
+        card_id: &str,
+        pin: &str,
+    ) -> Result<Option<Account>, ApiError<ConnectCardError>> {
         let auth_api = self.as_auth();
         let auth_req = ConnectCardRequest::new(card_id.to_owned(), pin.to_owned());
         match auth_api.connect_card(Some(auth_req)).await {
@@ -95,13 +99,13 @@ impl OpenBarClient {
                 } else {
                     Ok(None)
                 }
-            },
+            }
             Err(e) => Err(e),
         }
     }
 
     /// Log out the current user by calling the `logout` method of the AuthApiClient.
-    /// 
+    ///
     /// Note: this method will modify the internal state of the client by clearing the auth token/cookies.
     pub async fn logout(&self) -> Result<(), ApiError<LogoutError>> {
         let auth_api = self.as_auth();
@@ -121,9 +125,15 @@ impl OpenBarClient {
     }
 
     /// Get items for a specific category by its ID.
-    pub async fn get_category_items(&self, category_id: &str) -> Result<Vec<Item>, ApiError<GetCategoryItemsError>> {
+    pub async fn get_category_items(
+        &self,
+        category_id: &str,
+    ) -> Result<Vec<Item>, ApiError<GetCategoryItemsError>> {
         let items_api = self.as_items();
-        match items_api.get_category_items(category_id, Some(0), Some(100), None).await {
+        match items_api
+            .get_category_items(category_id, Some(0), Some(100), None)
+            .await
+        {
             Ok(items) => Ok(items.items),
             Err(e) => Err(e),
         }

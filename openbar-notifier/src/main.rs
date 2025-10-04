@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use log::{info, error, debug};
-use openbar_notifier::openbar::{webconfig::{get_config_with_client}, OpenBarClient};
-use openbar_api::models::{ItemState};
+use log::{debug, error, info};
+use openbar_api::models::ItemState;
+use openbar_notifier::openbar::{OpenBarClient, webconfig::get_config_with_client};
 
 #[tokio::main]
 async fn main() {
@@ -56,7 +56,7 @@ async fn main() {
                     Ok(items) => {
                         info!("Items in category {}:", category.name);
                         for item in items {
-                            let status : &str;
+                            let status: &str;
                             if item.state == ItemState::ItemNotBuyable {
                                 status = "⛔";
                             } else if item.amount_left > 0 {
@@ -67,10 +67,13 @@ async fn main() {
                             info!(" - {} {} (ID: {})", status, item.name, item.id);
                         }
                     }
-                    Err(e) => error!("Error retrieving items for category {}: {:?}", category.name, e),
+                    Err(e) => error!(
+                        "Error retrieving items for category {}: {:?}",
+                        category.name, e
+                    ),
                 }
             }
-        },
+        }
         Err(e) => error!("Error retrieving categories: {:?}", e),
     }
 
@@ -83,15 +86,15 @@ async fn main() {
 
 /// Create a Reqwest HTTP client with TLS Keylog support (easier to debug).
 fn create_http_client() -> reqwest::Client {
-    let root_store = rustls::RootCertStore::from_iter(
-        webpki_roots::TLS_SERVER_ROOTS
-            .iter()
-            .cloned(),
-    );
-    let mut tls_client = rustls::ClientConfig::builder_with_provider(Arc::new(rustls::crypto::aws_lc_rs::default_provider()))
-        .with_safe_default_protocol_versions().expect("Failed to set protocol versions")
-        .with_root_certificates(root_store)
-        .with_no_client_auth();
+    let root_store =
+        rustls::RootCertStore::from_iter(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+    let mut tls_client = rustls::ClientConfig::builder_with_provider(Arc::new(
+        rustls::crypto::aws_lc_rs::default_provider(),
+    ))
+    .with_safe_default_protocol_versions()
+    .expect("Failed to set protocol versions")
+    .with_root_certificates(root_store)
+    .with_no_client_auth();
     tls_client.key_log = std::sync::Arc::new(rustls::KeyLogFile::new());
     reqwest::ClientBuilder::new()
         .use_preconfigured_tls(tls_client)
